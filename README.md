@@ -8,6 +8,8 @@ Based on :
 - netaddr https://pypi.python.org/pypi/netaddr
 - Flask-RESTful http://flask-restful.readthedocs.org/en/latest/
 
+[![Build Status](https://travis-ci.org/hayorov/hippools.svg?branch=master)](https://travis-ci.org/hayorov/hippools)
+
 -------
 Changes
 -------
