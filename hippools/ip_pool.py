@@ -86,6 +86,7 @@ class IPPool:
                     self._db['pool'] ^= allocated_ip_sets
                     self._db['allocated'][allocated_ip_sets_hash] = allocated_ip_sets
                     self._dump_pool_db()
+                    logger.info("[-] Allocated %s" % allocated_ip_sets)
                     return allocated_ip_sets_hash
             raise Exception("Cannot get IpSet size=%s" % ip_count)
 
@@ -97,6 +98,7 @@ class IPPool:
             del self._db['allocated'][ip_sets_hash]
             self._db['pool'] |= ipset
             self._dump_pool_db()
+            logger.info("[+] De-allocated %s" % ipset)
             return True
 
     @staticmethod
