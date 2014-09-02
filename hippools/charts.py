@@ -1,18 +1,10 @@
-from copy import deepcopy
 import matplotlib
-from matplotlib.colorbar import ColorbarBase
 
-from ip_pool import IPPool
-
-#matplotlib.use('Agg')
+matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
 from config_parser import ALL_IP_POOLS
 
-# No windows should pop up in a web server
-
-
-import numpy as np
 from cStringIO import StringIO
 
 html = '''
@@ -33,9 +25,7 @@ def chart_index():
         labels.append('%s\nTotal IP %s' % (pool_name, size))
         sizes.append(size)
     plt.cla()
-    plt.pie(sizes, labels=labels,
-            autopct='%1.1f%%', shadow=True, startangle=90)
-    # Set aspect ratio to be equal so that pie is drawn as a circle.
+    plt.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
     plt.axis('equal')
 
     io = StringIO()
@@ -83,8 +73,6 @@ def chart_fragmentation(pool_name):
         if x_max < last:
             x_max = last
         bounds.append((first, last-first))
-
-
 
     ax1.broken_barh(bounds, (0, 1))
     ax1.set_xticklabels([])
