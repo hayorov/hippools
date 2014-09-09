@@ -1,4 +1,5 @@
 import matplotlib
+import operator
 
 matplotlib.use('Agg')
 
@@ -10,7 +11,7 @@ from cStringIO import StringIO
 html = '''
 <html>
     <body>
-        <img src="data:image/png;base64,{}" />
+        <img src="data:image/png;base64,{0}" />
     </body>
 </html>
 '''
@@ -25,13 +26,12 @@ def chart_index():
         labels.append('%s\nTotal IP %s' % (pool_name, size))
         sizes.append(size)
     plt.cla()
-    plt.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
+    plt.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True)
     plt.axis('equal')
 
     io = StringIO()
     plt.savefig(io, format='png')
     data = io.getvalue().encode('base64')
-
     return html.format(data)
 
 
@@ -46,13 +46,22 @@ def chart_utilisation(pool_name):
     labels.append('%s\nUsed IP %s' % (pool_name, used))
     sizes.append(used)
     plt.pie(sizes, labels=labels,
-            autopct='%1.1f%%', shadow=True, startangle=90)
+            autopct='%1.1f%%', shadow=True)
     plt.axis('equal')
     io = StringIO()
     plt.savefig(io, format='png')
     data = io.getvalue().encode('base64')
-
     return html.format(data)
+
+
+def print_allocated(pool_name):
+    sizes = []
+    for ip_set_hash, pool in getattr(ALL_IP_POOLS[pool_name], '_db')['allocated'].items():
+        print('%s %s' % (pool.size, ip_set_hash))
+        sizes.append('%s' % pool.size)
+    sort_dict = dict((x, sizes.count(x)) for x in set(sizes))
+    print sort_dict
+    print(sorted(sort_dict.iteritems(), key=operator.itemgetter(1)))
 
 
 def chart_fragmentation(pool_name):
@@ -72,7 +81,7 @@ def chart_fragmentation(pool_name):
             is_inited = True
         if x_max < last:
             x_max = last
-        bounds.append((first, last-first))
+        bounds.append((first, last - first))
 
     ax1.broken_barh(bounds, (0, 1))
     ax1.set_xticklabels([])
