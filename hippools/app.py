@@ -6,7 +6,7 @@ from resources import IPPoolUtilization, PoolUsed, MyPool, PoolFree
 
 app = Flask(__name__)
 api = Api(app)
-from hippools.views import *
+from views import *
 
 # API v1
 api.add_resource(MyPool, '/api/v1/pools/<string:pool_name>')

@@ -1,3 +1,4 @@
+from flask import make_response
 import matplotlib
 import operator
 
@@ -16,9 +17,6 @@ html = '''
 </html>
 '''
 
-def index_page():
-    return
-
 
 def chart_index():
     # The slices will be ordered and plotted counter-clockwise.
@@ -34,8 +32,11 @@ def chart_index():
 
     io = StringIO()
     plt.savefig(io, format='png')
-    data = io.getvalue().encode('base64')
-    return html.format(data)
+    response = make_response(io.getvalue())
+    response.headers['Content-Type'] = 'image/png'
+    return response
+    # data = io.getvalue().encode('base64')
+    # return html.format(data)
 
 
 def chart_utilisation(pool_name):
@@ -86,7 +87,7 @@ def chart_fragmentation(pool_name):
             x_max = last
         bounds.append((first, last - first))
 
-    ax1.broken_barh(bounds, (0, 1),edgecolor=None)
+    ax1.broken_barh(bounds, (0, 1), edgecolor=None)
     ax1.set_xticklabels([])
     ax1.set_yticklabels([])
     ax1.set_xticks([])

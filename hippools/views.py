@@ -4,7 +4,7 @@ from app import app
 from charts import chart_index, chart_utilisation, chart_fragmentation
 from config_parser import ALL_IP_POOLS
 
-@app.route("/")
+@app.route("/chart_index.png")
 def index():
     return chart_index()
 
@@ -25,6 +25,7 @@ def fragmentation(pool_name):
     return chart_fragmentation(pool_name)
 
 
+@app.route("/")
 @app.route("/index.html")
 def main_view():
-    return render_template('index.html', ALL_IP_POOLS=ALL_IP_POOLS )
+    return render_template('index.html', ALL_IP_POOLS=ALL_IP_POOLS)
