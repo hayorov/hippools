@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block content %}
+    {% for pool in ALL_IP_POOLS %}
+        <div><p>{{pool}} says: <b>{{pool}}</b></p></div>
+    {% endfor %}
+{% endblock %}

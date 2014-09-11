@@ -16,6 +16,9 @@ html = '''
 </html>
 '''
 
+def index_page():
+    return
+
 
 def chart_index():
     # The slices will be ordered and plotted counter-clockwise.
@@ -66,9 +69,9 @@ def print_allocated(pool_name):
 
 def chart_fragmentation(pool_name):
     bounds = []
-    fig = plt.figure(figsize=(22, 3))
+    fig = plt.figure(figsize=(60, 3))
     # create a horizontal plot
-    ax1 = fig.add_subplot(221)
+    ax1 = fig.add_subplot(511)
     pool = getattr(ALL_IP_POOLS[pool_name], '_db')['pool']
     x_min = x_max = 0
     is_inited = False
@@ -83,12 +86,13 @@ def chart_fragmentation(pool_name):
             x_max = last
         bounds.append((first, last - first))
 
-    ax1.broken_barh(bounds, (0, 1))
+    ax1.broken_barh(bounds, (0, 1),edgecolor=None)
     ax1.set_xticklabels([])
     ax1.set_yticklabels([])
     ax1.set_xticks([])
     ax1.set_yticks([])
     ax1.set_xlim(x_min, x_max)
+    ax1.shrink = 0
     io = StringIO()
     plt.savefig(io, format='png')
     data = io.getvalue().encode('base64')
