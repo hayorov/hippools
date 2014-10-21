@@ -5,6 +5,7 @@ from resources import IPPoolUtilization, PoolUsed, MyPool, PoolFree
 
 
 app = Flask(__name__)
+app.debug = True
 api = Api(app)
 from views import *
 
