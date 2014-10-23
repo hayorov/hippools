@@ -7,6 +7,6 @@
 """hippools is a simple service for Internet Protocol address management (IPAM)."""
 
 #: Version info (major, minor, maintenance, status)
-VERSION = (0, 0, 2)
+VERSION = (0, 1, 2)
 STATUS = ''
 __version__ = '%d.%d.%d' % VERSION[0:3] + STATUS

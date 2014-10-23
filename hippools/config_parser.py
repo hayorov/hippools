@@ -13,6 +13,7 @@ if not config.read(CONFIG_FILE_PATH):
 
 try:
     DB_PATH = config['HIPPOOLSD']['DBPath'].strip()
+    SQL_CONNECTION = config['HIPPOOLSD']['sql_connection'].strip()
     LOGLEVEL = config['HIPPOOLSD']['LogLevel'].strip()
     LOGFILE = config['HIPPOOLSD']['LogFile'].strip()
     ALL_IP_POOLS = {}

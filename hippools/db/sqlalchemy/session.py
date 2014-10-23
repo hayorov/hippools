@@ -3,14 +3,14 @@ import sqlalchemy.interfaces
 import sqlalchemy.orm
 import sqlalchemy.engine
 from sqlalchemy.exc import DisconnectionError
-
+from hippools import config_parser
 
 
 logger = logging.getLogger(__name__)
+
 _ENGINE = None
 _MAKER = None
-SQL_CONNECTION = 'sqlite:///1.db'
-SQL_CONNECTION = 'mysql://root:1q2w3e@localhost/hippools'
+SQL_CONNECTION = config_parser.SQL_CONNECTION
 SQL_IDLE_TIMEOUT = 3600
 
 

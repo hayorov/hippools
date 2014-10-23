@@ -1,6 +1,7 @@
-from netaddr import IPSet, IPNetwork, IPAddress
+from netaddr import IPSet, IPNetwork
 from hippools import db
 from hippools.db.api import get_session
+from hippools.db.utils import pool_to_network
 
 
 def init_db():

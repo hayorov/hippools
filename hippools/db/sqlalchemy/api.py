@@ -1,3 +1,4 @@
+import logging
 from netaddr import IPSet, IPNetwork
 from sqlalchemy import desc, event
 from sqlalchemy.orm import Session
@@ -6,6 +7,9 @@ from hippools.db.sqlalchemy import models
 
 from hippools.db.sqlalchemy.session import get_session
 from hippools.db.utils import pool_to_network
+
+
+logger = logging.getLogger(__name__)
 
 
 def model_query(context, *args):
@@ -23,16 +27,16 @@ def _session(context):
 
 @event.listens_for(models.Pool, 'after_update')
 def receive_after_update_pool(mapper, connection, pool):
-    print('after_update %s' % pool.pool_id)
+    logger.debug('receive_after_update_pool pool id %s' % pool.pool_id)
     if pool.is_free:
         context = get_session()
         [up_neighbor, down_neighbor] = pool_neighbors_get(context, pool.pool_id)
         if up_neighbor:
-            print('up_neighbor pool %s' % up_neighbor.is_free)
+            logger.debug('up_neighbor pool is free %s' % up_neighbor.is_free)
             concat_networks(context, pool, up_neighbor)
 
         if down_neighbor:
-            print('down_neighbor pool %s' % down_neighbor.is_free)
+            logger.debug('down_neighbor pool is free %s' % down_neighbor.is_free)
             concat_networks(context, pool, down_neighbor)
 
 
@@ -82,9 +86,7 @@ def pool_group_get_by_name(context, netgroup_name):
 def initial_pool_add(context, values):
     initial_pool = models.InitialPool()
     initial_pool.update(values)
-    initial_pool.group_id = values['group_id'].group_id
-    cidr = values['cidr']
-    cidr = IPNetwork(cidr)
+    cidr = IPNetwork(values['cidr'])
     initial_pool.ip = cidr.first
     initial_pool.netmask = cidr.netmask.value
     initial_pool.count = len(cidr)
@@ -181,6 +183,6 @@ def free_pool_find_by_netmask_and_netgroup(context, netmask, netgroup_name):
     pool_group = pool_group_get_by_name(context, netgroup_name)
     query = model_query(context, models.Pool).filter(models.Pool.netmask <= netmask,
                                                      models.Pool.is_free == True,
-                                                     ).join(models.InitialPool).order_by(desc(models.Pool.netmask))
+                                                     ).join(models.InitialPool).filter(models.InitialPool.group == pool_group).order_by(desc(models.Pool.netmask))
     return query.first()
 
