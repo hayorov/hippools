@@ -12,6 +12,7 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
+from netaddr import IPNetwork, IPAddress
 
 
 class LazyPluggable(object):
@@ -40,3 +41,7 @@ class LazyPluggable(object):
         backend = self.__get_backend()
         return getattr(backend, key)
 
+
+def pool_to_network(pool):
+    network = IPNetwork('%s/%s' % (IPAddress(pool.ip), IPAddress(pool.netmask)))
+    return network

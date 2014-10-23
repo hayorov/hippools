@@ -15,6 +15,12 @@ def pool_group_add(context, values):
     return IMPL.pool_group_add(context, values)
 
 
+def pool_group_get_by_name(context, netgroup_name):
+    return IMPL.pool_group_get_by_name(context, netgroup_name)
+
+# -------------------------
+
+
 def pool_group_get_all(context):
     return IMPL.pool_group_get_all(context)
 
@@ -39,11 +45,15 @@ def used_pool_add(context, values):
 
 
 def used_pool_get(context, values):
-    return IMPL.used_pool_get(context, values)
+    return IMPL.pool_get(context, values)
 
 
 def pool_delete(context, pool_id):
     return IMPL.pool_delete(context, pool_id)
+
+
+def pool_neighbors_get(context, pool_id):
+    return IMPL.pool_neighbors_get(context, pool_id)
 
 
 # ----------------------------
@@ -56,5 +66,9 @@ def free_pool_get(context, pool_id):
     return IMPL.free_pool_get(context, pool_id)
 
 
-def free_pool_find_by_netnask(context, netmask):
-    return IMPL.free_pool_find_by_netnask(context, netmask)
+def free_pool_find_by_netmask(context, netmask):
+    return IMPL.free_pool_find_by_netmask(context, netmask)
+
+
+def free_pool_find_by_netmask_and_netgroup(context, netmask, netgroup_name):
+    return IMPL.free_pool_find_by_netmask_and_netgroup(context, netmask, netgroup_name)

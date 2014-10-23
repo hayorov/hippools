@@ -69,3 +69,36 @@ class MyPool(GetOnlyResource):
             return '', 204
         except Exception as e:
             abort(406, mesage="Not Acceptable. (%s)" % e)
+
+
+class SQLPool(GetOnlyResource):
+    def get(self, pool_name):
+        abort_if_ippol_not_doesnt_exist(pool_name)
+        parser.add_argument('netmask', type=int, help='set netmask parameter')
+        parser.add_argument('stack_id', type=str, help='set netmask parameter')
+        parser.add_argument('stack_name', type=str, help='set netmask parameter')
+        args = parser.parse_args()
+        net_mask = int(args['netmask'])
+        stack_id = args['stack_id']
+        stack_name = args['stack_name']
+        if 0 > net_mask > 32:
+            abort(400, message="Bad mask: %s" % net_mask)
+        try:
+            ip_set_hash = getattr(ALL_IP_POOLS[pool_name], 'allocate')(net_mask)
+            ip_set = getattr(ALL_IP_POOLS[pool_name], 'get_allocated_ip_pools')(ip_set_hash)
+            return {'ipset_id': ip_set_hash, 'pool_name': pool_name,
+                    'allocated_ipset': [unicode(cidr) for cidr in ip_set.iter_cidrs()],
+                    'allocated_range': getattr(ALL_IP_POOLS[pool_name], 'ip_sets_to_ip_range')(ip_set)}
+        except IOError as e:
+            abort(406, mesage="Not Acceptable %s" % e)
+
+    def delete(self, pool_name):
+        abort_if_ippol_not_doesnt_exist(pool_name)
+        parser.add_argument('ipset_id', type=str, help='set ipset_id parameter')
+        args = parser.parse_args()
+        try:
+            getattr(ALL_IP_POOLS[pool_name], 'deallocate')(args['ipset_id'])
+            return '', 204
+        except Exception as e:
+            abort(406, mesage="Not Acceptable. (%s)" % e)
+

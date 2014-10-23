@@ -5,6 +5,7 @@ from hippools.db.exception import NotFound
 from hippools.db.sqlalchemy import models
 
 from hippools.db.sqlalchemy.session import get_session
+from hippools.db.utils import pool_to_network
 
 
 def model_query(context, *args):
@@ -19,10 +20,38 @@ def _session(context):
 
 # ---------------------------------------
 
-# @event.listens_for(models.InitialPool, 'after_insert')
-# def initial_pool_after_insert(mapper, connection, target):
-#     target.
-#     free_pool_add()
+
+@event.listens_for(models.Pool, 'after_update')
+def receive_after_update_pool(mapper, connection, pool):
+    print('after_update %s' % pool.pool_id)
+    if pool.is_free:
+        context = get_session()
+        [up_neighbor, down_neighbor] = pool_neighbors_get(context, pool.pool_id)
+        if up_neighbor:
+            print('up_neighbor pool %s' % up_neighbor.is_free)
+            concat_networks(context, pool, up_neighbor)
+
+        if down_neighbor:
+            print('down_neighbor pool %s' % down_neighbor.is_free)
+            concat_networks(context, pool, down_neighbor)
+
+
+def concat_networks(context, pool_1, pool_2):
+    if pool_1.is_free and pool_2.is_free:
+        network_1 = pool_to_network(pool_1)
+        network_2 = pool_to_network(pool_2)
+        if network_1.size == network_2.size:
+            ipset = IPSet([network_1, network_2])
+            print ipset
+            cidr = ipset.iter_cidrs()[0]
+            pool_1.ip = cidr.first
+            pool_1.netmask = cidr.netmask.value
+            concated_pool = free_pool_add(context, {'initial_pool':  pool_1.initial_pool, 'cidr': ipset.iter_cidrs()[0]})
+            pool_delete(context, pool_2.pool_id)
+            receive_after_update_pool(None, None, concated_pool)
+
+
+
 
 # ---------------------------------------
 
@@ -43,6 +72,13 @@ def pool_group_add(context, values):
     return pool_group
 
 
+def pool_group_get_by_name(context, netgroup_name):
+    pool_group = model_query(context, models.PoolGroup).filter(models.PoolGroup.group_name == netgroup_name).first()
+    return pool_group
+
+
+# ----------------------------------
+
 def initial_pool_add(context, values):
     initial_pool = models.InitialPool()
     initial_pool.update(values)
@@ -53,6 +89,7 @@ def initial_pool_add(context, values):
     initial_pool.netmask = cidr.netmask.value
     initial_pool.count = len(cidr)
     initial_pool.save(_session(context))
+    free_pool_add(context, {'initial_pool': initial_pool, 'cidr': cidr})
     return initial_pool
 
 
@@ -70,6 +107,10 @@ def initial_pool_delete(context, pool_id):
     session.delete(pool)
     session.flush()
 
+
+def __initial_pool_get_by_pool_group(context, pool_group):
+    result = model_query(context, models.InitialPool).filter(models.InitialPool.group == pool_group).all()
+    return result
 
 # ------used_pool--------
 
@@ -135,4 +176,11 @@ def free_pool_find_by_netnask(context, netmask):
                                                      models.Pool.is_free == True).order_by(desc(models.Pool.netmask))
     return query.first()
 
+
+def free_pool_find_by_netmask_and_netgroup(context, netmask, netgroup_name):
+    pool_group = pool_group_get_by_name(context, netgroup_name)
+    query = model_query(context, models.Pool).filter(models.Pool.netmask <= netmask,
+                                                     models.Pool.is_free == True,
+                                                     ).join(models.InitialPool).order_by(desc(models.Pool.netmask))
+    return query.first()
 

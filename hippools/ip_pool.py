@@ -119,3 +119,16 @@ class IPPool:
     def get_allocated_ip_pools(self, ip_sets_hash):
         with self._lock:
             return self._get_allocated_ip_pools(ip_sets_hash)
+
+
+class IPPoolV2():
+
+    def allocate(self):
+        pass
+
+    def deallocate(self):
+        pass
+
+    @property
+    def size(self):
+        return self._size(self._db['pool'])

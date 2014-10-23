@@ -22,36 +22,47 @@ def init_db():
     # print pool
 
 
-def allocate(netmask):
+def allocate(netmask, net_group_name, stack_id=None, stack_name=None):
     context = get_session()
-    pool = db.api.free_pool_find_by_netnask(context, netmask)
-    ip_set = pool_to_network(pool)
-    ip_count = IPNetwork('0.0.0.0/%s' % netmask).size
-    if ip_set.size == ip_count:
+    network = IPNetwork('0.0.0.0/%s' % netmask)
+    pool = db.api.free_pool_find_by_netmask_and_netgroup(context, network.netmask.value, net_group_name)
+    ip_network = pool_to_network(pool)
+    if ip_network.size == network.size:
         pool.is_free = False
+        pool.stack_id = stack_id
+        pool.stack_name = stack_name
         pool.save()
         return pool
-    a = list(ip_set.subnet(netmask))
-    new_network = a[0]
-    a = IPSet(a[1::])
-    print new_network
-    db.api.used_pool_add(context, {'initial_pool': pool.initial_pool, 'cidr': new_network})
-    for free_pool in a.iter_cidrs():
+
+    pool_list = list(ip_network.subnet(netmask))
+    allocated_network = pool_list[0]
+    pool_list = IPSet(pool_list[1::])
+    print allocated_network
+    allocated_pool = db.api.used_pool_add(context, {'initial_pool': pool.initial_pool, 'cidr': allocated_network,
+                                                    'stack_id': stack_id, 'stack_name': stack_name})
+    for free_pool in pool_list.iter_cidrs():
         db.api.free_pool_add(context, {'initial_pool':  pool.initial_pool, 'cidr': free_pool})
     db.api.pool_delete(context, pool.pool_id)
+    print pool_list
+    # print ip_count
+    print('allocate %s ' % allocated_pool.pool_id)
+    return allocated_pool
 
 
-    print a
-    print ip_count
-    print('allocate %s '% pool)
+def deallocate(pool_id):
+    context = get_session()
+    pool = db.api.used_pool_get(context, pool_id)
+    print('deallocate pool %s' % pool)
+    [pool_1, pool_2] = db.api.pool_neighbors_get(context, pool_id)
+    print('deallocate pool %s' % pool_1.is_free)
+    print('deallocate pool %s' % pool_2.is_free)
+    pool.is_free = True
+    pool.save(context)
 
 
-def pool_to_network(pool):
-    bb = IPNetwork('%s/%s' % (IPAddress(pool.ip), IPAddress(pool.netmask)))
-    print bb
-    return bb
 
+# init_db()
+pool_a = allocate(28, '10.31_pool')
+deallocate(pool_a.pool_id)
 
-#init_db()
-allocate(30)
 #print db.api.pool_group_get_all(None)[0].group_name
