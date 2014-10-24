@@ -4,7 +4,7 @@ __author__ = 'vfilippov'
 
 
 IMPL = utils.LazyPluggable('db_backend',
-                           sqlalchemy='db.sqlalchemy.api')
+                           sqlalchemy='hippools.db.sqlalchemy.api')
 
 
 def get_session():

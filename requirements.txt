@@ -1,6 +1,7 @@
+fixture
 sqlalchemy
 pyping
-matplotlib
+Flask-Testing
 Flask-RESTful==0.2.8
 netaddr==0.7.12
 requests==1.2.0

@@ -97,4 +97,9 @@ class Pool(BASE, HippoolsBase):
     stack_name = Column(String(128))
 
 
-BASE.metadata.create_all(get_engine())
+def create_all():
+    BASE.metadata.create_all(get_engine())
+
+
+def drop_all():
+    BASE.metadata.drop_all(get_engine())
