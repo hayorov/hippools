@@ -142,13 +142,12 @@ class IPPoolV2():
             pool_list = list(ip_network.subnet(netmask))
             allocated_network = pool_list[0]
             pool_list = IPSet(pool_list[1::])
-            print allocated_network
             allocated_pool = db.api.used_pool_add(context, {'initial_pool': pool.initial_pool, 'cidr': allocated_network,
                                                             'stack_id': stack_id, 'stack_name': stack_name})
             for free_pool in pool_list.iter_cidrs():
                 db.api.free_pool_add(context, {'initial_pool':  pool.initial_pool, 'cidr': free_pool})
             db.api.pool_delete(context, pool.pool_id)
-            logger.info('allocate pool id %s ' % allocated_pool.pool_id)
+            logger.info('allocate pool id %s %s' % (allocated_pool.pool_id, allocated_network))
         return allocated_pool
 
     def deallocate(self, pool_id):

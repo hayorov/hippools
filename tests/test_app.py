@@ -64,4 +64,3 @@ class IPPoolV2Test(PoolTestCase):
         allocated_pool = self.allocated_pool
         pool_id = allocated_pool.pool_id
         ip_pool_v2.deallocate(pool_id)
-        print allocated_pool
