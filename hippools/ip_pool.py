@@ -9,7 +9,6 @@ from config_parser import DB_PATH, LOGFILE, LOGLEVEL
 from hippools.db.api import get_session
 from hippools import db
 
-# temp
 from hippools.db.utils import pool_to_network
 
 if LOGLEVEL == 'DEBUG':
@@ -155,9 +154,10 @@ class IPPoolV2():
     def deallocate(self, pool_id):
         context = get_session()
         pool = db.api.used_pool_get(context, pool_id)
-        logger.info('deallocate pool %s' % pool.id)
+        logger.info('deallocate pool %s' % pool.pool_id)
         pool.is_free = True
         pool.save(context)
+        db.api.concat_pool(context, pool)
 
 
 class IPPoolGroup():
@@ -168,7 +168,7 @@ class IPPoolGroup():
 
     def get_pool_group(self, group_name):
         context = get_session()
-        group = db.api.pool_group_get_by_name(context, {'group_name': group_name})
+        group = db.api.pool_group_get_by_name(context,  group_name)
         return  group
 
 

@@ -72,3 +72,9 @@ def free_pool_find_by_netmask(context, netmask):
 
 def free_pool_find_by_netmask_and_netgroup(context, netmask, netgroup_name):
     return IMPL.free_pool_find_by_netmask_and_netgroup(context, netmask, netgroup_name)
+
+
+#-------------------------------
+
+def concat_pool(context, pool):
+    return IMPL.concat_pool(context, pool)
