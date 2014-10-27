@@ -1,6 +1,8 @@
 from flask.ext.testing import TestCase
 from fixture import SQLAlchemyFixture
 from netaddr import IPNetwork
+# import pytest
+
 from hippools.app import app
 from hippools.db.api import get_session
 from hippools.db.sqlalchemy import models
@@ -8,7 +10,7 @@ from hippools.db.sqlalchemy import session
 from hippools import db
 
 
-class MyTest(TestCase):
+class AppTest(TestCase):
 
     session.SQL_CONNECTION = 'mysql://root:1q2w3e@localhost/test_hippools'
     TESTING = True
