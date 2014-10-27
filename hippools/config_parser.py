@@ -2,7 +2,7 @@ import os
 import sys
 import configparser
 
-ROOT_PATH = './etc'
+ROOT_PATH = './hippools/etc'
 CONFIG_FILE_PATH = os.path.join(ROOT_PATH, 'hippools.conf')
 
 config = configparser.ConfigParser()
