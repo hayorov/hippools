@@ -13,6 +13,7 @@ before_script:
   - mysql -e 'create database test_hippools;'
   - sudo mkdir /var/lib/hippools/
   - sudo chmod 777 /var/lib/hippools/
+  - sudo chmod -R 777 /var/log/
 
 script:
   - python setup.py test
