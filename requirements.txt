@@ -1,5 +1,6 @@
 fixture
 sqlalchemy
+mysql-python
 pyping
 Flask-Testing
 exam
