@@ -1,16 +1,19 @@
 from requests import get, delete
 
 # temp
-API_HOST = 'http://127.0.0.1:5001/api/v1'
+HOST = 'http://127.0.0.1:5001'
+API_VERSION = '/api/v1'
+allocate_url = '/pools/%s?ip_count=%s'
+deallocate_url = '/pools/%s?ipset_id=%s'
 
 
 def allocate(pool, ip_count):
-    r = get('%s/pools/%s?ip_count=%s' % (API_HOST, pool, ip_count))
+    r = get(HOST + API_VERSION + allocate_url % (pool, ip_count))
     return r.json()
 
 
 def deallocate(pool, ipset_id):
-    r = delete('%s/pools/%s?ipset_id=%s' % (API_HOST, pool, ipset_id))
+    r = delete(HOST + API_VERSION + deallocate_url % (pool, ipset_id))
     try:
         err = r.json()
     except:

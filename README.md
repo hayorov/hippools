@@ -13,7 +13,7 @@ Based on :
 -------
 Changes
 -------
-12/04/2013 Hello world
+10/23/2014 Add db storage
 
 -------
 License
