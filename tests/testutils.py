@@ -10,7 +10,7 @@ from exam.cases import Exam
 
 
 class PoolTestCase(Exam, TestCase):
-    session.SQL_CONNECTION = 'mysql://root:1q2w3e@localhost/test_hippools'
+    session.SQL_CONNECTION = 'mysql://root@localhost/test_hippools'
     TESTING = True
 
     def create_app(self):
