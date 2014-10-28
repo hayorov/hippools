@@ -14,7 +14,7 @@ before_script:
 
 script:
   - python setup.py test
-  - py.test tests/
+  - sudo py.test tests/
 
 notifications:
   email:
