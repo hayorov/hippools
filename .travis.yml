@@ -11,10 +11,12 @@ install:
 
 before_script:
   - mysql -e 'create database test_hippools;'
+  - sudo mkdir /var/lib/hippools/
+  - sudo chmod 777 /var/lib/hippools/
 
 script:
   - python setup.py test
-  - sudo py.test tests/
+  - py.test tests/
 
 notifications:
   email:
