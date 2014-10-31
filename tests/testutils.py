@@ -1,3 +1,5 @@
+from flask import Flask
+from flask.ext.restful import Api
 from flask.ext.testing import TestCase
 
 from hippools.app import app
@@ -7,6 +9,7 @@ from hippools.ip_pool import IPPoolGroup, IPInitialPool, IPPoolV2
 
 from exam.decorators import fixture
 from exam.cases import Exam
+from hippools.resources import MyPool, PoolUsed, PoolFree, IPPoolUtilization, SQLPool, InitialPool, PoolGroup
 
 
 class PoolTestCase(Exam, TestCase):
@@ -14,7 +17,21 @@ class PoolTestCase(Exam, TestCase):
     TESTING = True
 
     def create_app(self):
-        # pass in test configuration
+        app = Flask(__name__)
+        app.debug = True
+        api = Api(app)
+
+        # API v1
+        api.add_resource(MyPool, '/api/v1/pools/<string:pool_name>')
+        api.add_resource(PoolUsed, '/api/v1/pools/<string:pool_name>/used')
+        api.add_resource(PoolFree, '/api/v1/pools/<string:pool_name>/free')
+        api.add_resource(IPPoolUtilization, '/api/v1/pools/<string:pool_name>/utilization')
+
+        # API v2
+        api.add_resource(SQLPool, '/api/v2/pools/<string:pool_name>')
+        api.add_resource(PoolGroup, '/api/v2/pools/poolgroup')
+        api.add_resource(InitialPool, '/api/v2/pools/<string:pool_name>')
+
         return app
 
     def setUp(self):

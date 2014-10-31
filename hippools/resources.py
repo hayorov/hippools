@@ -75,8 +75,8 @@ class MyPool(GetOnlyResource):
 class SQLPool(GetOnlyResource):
     def get(self, pool_name):
         parser.add_argument('netmask', type=int, help='set netmask parameter')
-        parser.add_argument('stack_id', type=str, help='set netmask parameter')
-        parser.add_argument('stack_name', type=str, help='set netmask parameter')
+        parser.add_argument('stack_id', type=str, help='set stack_id parameter')
+        parser.add_argument('stack_name', type=str, help='set stack_name parameter')
         args = parser.parse_args()
         net_mask = int(args['netmask'])
         stack_id = args['stack_id']
@@ -85,9 +85,9 @@ class SQLPool(GetOnlyResource):
             abort(400, message="Bad mask: %s" % net_mask)
         try:
             ip_pool = IPPoolV2()
-            allocated_pool = ip_pool.allocate(net_mask, stack_id, stack_name)
+            allocated_pool = ip_pool.allocate(net_mask, pool_name, stack_id, stack_name)
             return {'pool_id': allocated_pool.pool_id, 'pool_group': pool_name,
-                    'allocated_network': pool_to_network(allocated_pool)}
+                    'allocated_network': str(pool_to_network(allocated_pool)), 'allocated_range': ''}
         except IOError as e:
             abort(406, mesage="Not Acceptable %s" % e)
 
