@@ -1,5 +1,5 @@
 from flask.ext.restful import reqparse, abort, Resource
-from hippools.db.utils import pool_to_network
+from hippools.db.utils import pool_to_network, pool_to_range
 from ip_pool import IPPool, IPPoolV2, IPPoolGroup, IPInitialPool
 from config_parser import ALL_IP_POOLS
 
@@ -87,7 +87,8 @@ class SQLPool(GetOnlyResource):
             ip_pool = IPPoolV2()
             allocated_pool = ip_pool.allocate(net_mask, pool_name, stack_id, stack_name)
             return {'pool_id': allocated_pool.pool_id, 'pool_group': pool_name,
-                    'allocated_network': str(pool_to_network(allocated_pool)), 'allocated_range': ''}
+                    'allocated_network': str(pool_to_network(allocated_pool)), 'allocated_range':
+                pool_to_range(allocated_pool)}
         except IOError as e:
             abort(406, mesage="Not Acceptable %s" % e)
 

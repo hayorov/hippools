@@ -45,3 +45,9 @@ class LazyPluggable(object):
 def pool_to_network(pool):
     network = IPNetwork('%s/%s' % (IPAddress(pool.ip), IPAddress(pool.netmask)))
     return network
+
+
+def pool_to_range(pool):
+    pool = pool_to_network(pool)
+    ip_range = {'StartIp': str(IPAddress(pool.first)), 'EndIp': str(IPAddress(pool.last))}
+    return ip_range

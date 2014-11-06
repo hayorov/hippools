@@ -11,20 +11,22 @@ from hippools import db
 
 from hippools.db.utils import pool_to_network
 
-if LOGLEVEL == 'DEBUG':
-    LOGLEVEL = logging.DEBUG
-else:
-    LOGLEVEL = logging.INFO
+# if LOGLEVEL == 'DEBUG':
+#     LOGLEVEL = logging.DEBUG
+# else:
+#     LOGLEVEL = logging.INFO
+
+# logger = logging.getLogger(__name__)
+# logger.setLevel(LOGLEVEL)
+#
+# # create console handler with a higher log level
+# ch = logging.FileHandler(LOGFILE)
+# formatter = logging.Formatter('%(asctime)s [%(name)s] [%(levelname)s] %(message)s')
+# ch.setFormatter(formatter)
+# logger.addHandler(ch)
+
 
 logger = logging.getLogger(__name__)
-logger.setLevel(LOGLEVEL)
-
-# create console handler with a higher log level
-ch = logging.FileHandler(LOGFILE)
-formatter = logging.Formatter('%(asctime)s [%(name)s] [%(levelname)s] %(message)s')
-ch.setFormatter(formatter)
-logger.addHandler(ch)
-
 
 class IPPool:
     _pool = None
@@ -71,7 +73,7 @@ class IPPool:
 
     def __init__(self, pools_list):
         self._db = {'pool': IPSet(pools_list), 'allocated': {}}
-        logger.debug("Inited pool with size=%s ips" % self.size)
+        logging.debug("Inited pool with size=%s ips" % self.size)
         self._pool_hash = md5(str(pools_list)).hexdigest()
         self._lock = FileLock(os.path.join(DB_PATH, self._pool_hash))
         self._load_pool_db()
