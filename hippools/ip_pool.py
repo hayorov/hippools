@@ -102,7 +102,13 @@ class IPPool:
             ipset = self._get_allocated_ip_pools(ip_sets_hash)
             logger.info("De-allocation started, free=%s" % ipset.size)
             del self._db['allocated'][ip_sets_hash]
-            self._db['pool'] |= ipset
+            try:
+                self._db['pool'] |= ipset
+            except Exception as e:
+                if '_cidrs' in str(e):
+                    self._db['pool'] = ipset
+                else:
+                    raise
             self._dump_pool_db()
             logger.info("[+] De-allocated %s" % ipset)
             return True
