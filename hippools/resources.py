@@ -4,7 +4,7 @@ from ip_pool import IPPool, IPPoolV2, IPPoolGroup, IPInitialPool
 from config_parser import ALL_IP_POOLS
 
 for ip_pool_name, ip_pool_size in ALL_IP_POOLS.iteritems():
-    ALL_IP_POOLS[ip_pool_name] = IPPool(ip_pool_size)
+    ALL_IP_POOLS[ip_pool_name] = IPPool(ip_pool_name, ip_pool_size)
 
 
 def abort_if_ippol_not_doesnt_exist(pool_name):

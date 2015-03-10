@@ -32,6 +32,7 @@ class IPPool:
     _pool = None
     _db = None
     _lock = None
+    _pool_name = None
 
     @property
     def size(self):
@@ -62,20 +63,21 @@ class IPPool:
         logger.debug("Try to load pool state from db")
         logger.debug("Pool hash=%s" % self._pool_hash)
         try:
-            self._db = load(file(os.path.join(DB_PATH, self._pool_hash), 'r'))
+            self._db = load(file(os.path.join(DB_PATH, self._pool_name), 'r'))
         except IOError:
             self._dump_pool_db()
 
     def _dump_pool_db(self):
         logger.debug("Try to dump pool state to db")
         logger.debug("Pool hash=%s" % self._pool_hash)
-        dump(self._db, file(os.path.join(DB_PATH, self._pool_hash), 'w'))
+        dump(self._db, file(os.path.join(DB_PATH, self._pool_name), 'w'))
 
-    def __init__(self, pools_list):
+    def __init__(self, ip_pool_name, pools_list):
         self._db = {'pool': IPSet(pools_list), 'allocated': {}}
         logging.debug("Inited pool with size=%s ips" % self.size)
+        self._pool_name = ip_pool_name
         self._pool_hash = md5(str(pools_list)).hexdigest()
-        self._lock = FileLock(os.path.join(DB_PATH, self._pool_hash))
+        self._lock = FileLock(os.path.join(DB_PATH, self._pool_name))
         self._load_pool_db()
 
     def allocate(self, ip_count):
