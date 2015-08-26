@@ -1,9 +1,8 @@
-import logging
 import os
 import sys
 import configparser
 
-ROOT_PATH = './hippools/etc'
+ROOT_PATH = '/etc'
 CONFIG_FILE_PATH = os.path.join(ROOT_PATH, 'hippools.conf')
 
 config = configparser.ConfigParser()
@@ -14,7 +13,6 @@ if not config.read(CONFIG_FILE_PATH):
 
 try:
     DB_PATH = config['HIPPOOLSD']['DBPath'].strip()
-    SQL_CONNECTION = config['HIPPOOLSD']['sql_connection'].strip()
     LOGLEVEL = config['HIPPOOLSD']['LogLevel'].strip()
     LOGFILE = config['HIPPOOLSD']['LogFile'].strip()
     ALL_IP_POOLS = {}
