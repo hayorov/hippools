@@ -6,6 +6,6 @@ Flask-Testing
 exam
 Flask-RESTful==0.2.8
 netaddr==0.7.12
-requests==1.2.0
+requests==2.20.0
 configparser==3.3.0r2
 lockfile==0.9.1
